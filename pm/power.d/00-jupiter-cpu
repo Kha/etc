@@ -1,0 +1,64 @@
+#!/bin/bash
+# 
+# CPU mode change on power state
+#
+
+JUPITER_PATH="/usr/lib/jupiter/scripts"
+JUPITER_KERNEL="/usr/lib/jupiter/kernel"
+JUPITER_HW="/usr/lib/jupiter/vendors"
+JUPITER_VAR="/var/jupiter"
+
+VENDOR=$(dmidecode -s system-manufacturer)
+
+AC_DEVICE=$(ls /sys/class/power_supply | grep "ADP\|AC")
+ACPI_AC_PROC=/sys/class/power_supply/$AC_DEVICE/online
+
+function save_ac_state {
+  if [ ! -d "$JUPITER_VAR" ]; then
+    mkdir $JUPITER_VAR 2>/dev/null
+  fi
+}
+
+function set_cpu {
+    if [ -e "$ACPI_AC_PROC" ]; then
+      if [ "$(cat $ACPI_AC_PROC)" = "1" ]; then
+        if [ -e "$JUPITER_VAR/power" ]; then
+          RESTORE_MODE=$(cat $JUPITER_VAR/power)
+        else
+          RESTORE_MODE="super"
+        fi
+        $JUPITER_PATH/cpu-control $RESTORE_MODE
+        $JUPITER_KERNEL/power
+        if [ -e "$JUPITER_HW/$VENDOR/power" ]; then
+          "$JUPITER_HW/$VENDOR/power"
+        fi
+      else
+        if [ -e "$JUPITER_VAR/battery" ]; then
+          RESTORE_MODE=$(cat $JUPITER_VAR/battery)
+        else
+          RESTORE_MODE="powersave"
+        fi
+        $JUPITER_PATH/cpu-control $RESTORE_MODE
+        $JUPITER_KERNEL/battery
+        if [ -e "$JUPITER_HW/$VENDOR/battery" ]; then
+          "$JUPITER_HW/$VENDOR/battery" 
+        fi
+      fi
+    else
+      if [ -e "$JUPITER_VAR/power" ]; then
+        RESTORE_MODE=$(cat $JUPITER_VAR/power)
+      else
+        RESTORE_MODE="super"
+      fi
+      $JUPITER_PATH/cpu-control $RESTORE_MODE
+      $JUPITER_KERNEL/power
+      if [ -e "$JUPITER_HW/$VENDOR/power" ]; then
+        "$JUPITER_HW/$VENDOR/power"
+      fi
+    fi
+}
+
+case "$1" in
+  *) set_cpu
+    ;;
+esac

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Jupiter
+Comment=Jupiter Startup
+Icon=/usr/share/pixmaps/jupiter.png
+Exec=/usr/bin/jupiter
+Terminal=false
+Type=Application

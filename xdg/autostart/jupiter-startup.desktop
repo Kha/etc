@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Jupiter Restore
+Comment=Restore configuration on login
+Icon=/usr/share/pixmaps/jupiter.png
+Exec=/usr/lib/jupiter/scripts/jupiter
+Terminal=false
+Type=Application
