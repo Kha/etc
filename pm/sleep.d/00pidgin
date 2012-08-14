@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# 00pidgin: set offline/online status
+
+case "$1" in
+hibernate|suspend)
+DISPLAY=:0 su -c 'purple-remote "setstatus?status=offline"' sebastian
+;;
+thaw|resume)
+DISPLAY=:0 su -c 'purple-remote "setstatus?status=available"' sebastian
+;;
+*) exit $NA
+;;
+esac
