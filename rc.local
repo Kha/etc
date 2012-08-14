@@ -3,4 +3,4 @@
 # /etc/rc.local: Local multi-user start-up script.
 #
 
-
+hdparm -B 255 /dev/sda
