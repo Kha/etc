@@ -1,6 +1,8 @@
 #!/bin/sh
 # Default acpi script that takes an entry for all actions
 
+suspend() { pm-suspend; }
+
 minspeed=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq`
 maxspeed=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq`
 setspeed="/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed"
@@ -12,7 +14,8 @@ case "$1" in
         case "$2" in
             PBTN|PWRF)
                 logger "PowerButton pressed: $2"
-                poweroff
+                suspend
+                #poweroff
                 ;;
             *)
                 logger "ACPI action undefined: $2"
@@ -22,7 +25,17 @@ case "$1" in
     button/sleep)
         case "$2" in
             SLPB|SBTN)
-                echo -n mem >/sys/power/state
+                suspend
+                ;;
+            *)
+                logger "ACPI action undefined: $2"
+                ;;
+        esac
+        ;;
+    button/prog1)
+        case "$2" in
+            PROG1)
+                suspend
                 ;;
             *)
                 logger "ACPI action undefined: $2"
@@ -68,10 +81,9 @@ case "$1" in
     button/lid)
         case "$3" in
             close)
-                logger 'LID closed'
+                suspend
                 ;;
             open)
-                logger 'LID opened'
                 ;;
             *)
                 logger "ACPI action undefined: $3"
