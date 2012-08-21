@@ -1,6 +1,8 @@
 #!/bin/sh
 # Default acpi script that takes an entry for all actions
 
+lock() { logger "locking"; su sebastian -c 'DISPLAY=:0 i3lock -c 000000'; }
+
 suspend() {
 	/etc/pm/sleep.d/00pidgin thaw
     lock
@@ -43,6 +45,16 @@ case "$1" in
         case "$2" in
             PROG1)
                 suspend
+                ;;
+            *)
+                logger "ACPI action undefined: $2"
+                ;;
+        esac
+        ;;
+    button/screenlock)
+        case "$2" in
+            SCRNLCK)
+                lock
                 ;;
             *)
                 logger "ACPI action undefined: $2"
