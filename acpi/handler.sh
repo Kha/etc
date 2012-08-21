@@ -1,7 +1,14 @@
 #!/bin/sh
 # Default acpi script that takes an entry for all actions
 
-suspend() { pm-suspend; }
+suspend() {
+	/etc/pm/sleep.d/00pidgin thaw
+    lock
+    echo mem > /sys/power/state
+    sleep 1
+    hdparm -B 255 /dev/sda
+	/etc/pm/sleep.d/00pidgin resume
+}
 
 minspeed=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq`
 maxspeed=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq`
