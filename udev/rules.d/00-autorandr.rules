@@ -1,0 +1,1 @@
+ACTION=="change", SUBSYSTEM=="drm", RUN+="/bin/su sebastian -c 'DISPLAY=:0 autorandr -c'"
