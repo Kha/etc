@@ -3,6 +3,7 @@ alsa-utils
 archlinux-keyring
 atop
 autoconf
+autofs
 automake
 autorandr-git
 bash
