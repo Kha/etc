@@ -53,3 +53,4 @@ DEADJOE
 # end section managed by etckeeper
 
 ssl/certs/
+wicd/wireless-settings.conf
