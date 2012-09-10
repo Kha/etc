@@ -3,4 +3,4 @@
 # mountpoint map options
 # For details of the format look at autofs(5).
 
-/media /etc/autofs/auto.media
+/mnt/sshfs /etc/autofs/auto.sshfs uid=1000,gid=1000,--timeout=30
