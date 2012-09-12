@@ -3,3 +3,7 @@
 #
 # <file system>	<dir>	<type>	<options>	<dump>	<pass>
 tmpfs		/tmp	tmpfs	nodev,nosuid	0	0
+/dev/sda5 swap swap defaults 0 0
+/dev/sda6 / btrfs defaults,noatime 0 1
+/dev/sda6 /mnt/real-root btrfs defaults,noatime 0 0
+/dev/sda6 /home btrfs defaults,noatime,subvol=/home/__active 0 1
