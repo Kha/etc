@@ -1,0 +1,20 @@
+#! /bin/bash
+
+if [ "$#" -ne 3 ]; then
+   echo Usage $0 SUBVOLUME SNAPSHOT_PREFIX NUM_SNAPSHOTS
+   exit 1
+fi
+
+SOURCE=$1/__active
+SNAPS=$1/__snapshot
+
+btrfs subvolume snapshot -r $SOURCE $SNAPS/$2_$(date +%F)
+
+num_snaps=$(ls -1d $SNAPS/$2_* | sort | wc -l)
+
+if [ "$num_snaps" -gt "$3" ]; then
+   let over=$num_snaps-$3
+   ls -1d $SNAPS/$2_* | head -n $over | while read s; do
+      btrfs subvolume delete $s
+   done
+fi
