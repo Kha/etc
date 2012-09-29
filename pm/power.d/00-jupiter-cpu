@@ -8,6 +8,8 @@ JUPITER_KERNEL="/usr/lib/jupiter/kernel"
 JUPITER_HW="/usr/lib/jupiter/vendors"
 JUPITER_VAR="/var/jupiter"
 
+DEFAULT_MODE="high"
+
 VENDOR=$(dmidecode -s system-manufacturer)
 
 AC_DEVICE=$(ls /sys/class/power_supply | grep "ADP\|AC")
@@ -25,7 +27,7 @@ function set_cpu {
         if [ -e "$JUPITER_VAR/power" ]; then
           RESTORE_MODE=$(cat $JUPITER_VAR/power)
         else
-          RESTORE_MODE="super"
+          RESTORE_MODE=$DEFAULT_MODE
         fi
         $JUPITER_PATH/cpu-control $RESTORE_MODE
         $JUPITER_KERNEL/power
@@ -48,7 +50,7 @@ function set_cpu {
       if [ -e "$JUPITER_VAR/power" ]; then
         RESTORE_MODE=$(cat $JUPITER_VAR/power)
       else
-        RESTORE_MODE="super"
+        RESTORE_MODE=$DEFAULT_MODE
       fi
       $JUPITER_PATH/cpu-control $RESTORE_MODE
       $JUPITER_KERNEL/power

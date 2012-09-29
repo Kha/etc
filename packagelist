@@ -67,6 +67,7 @@ libtool
 libva-driver-intel
 licenses
 linux
+linux-mainline
 lm_sensors
 logrotate
 lvm2
@@ -85,7 +86,6 @@ pacmatic
 patch
 pciutils
 pcmciautils
-pentadactyl-hg
 perl
 perl-anyevent-i3
 perl-authen-sasl

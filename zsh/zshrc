@@ -179,6 +179,11 @@ isdarwin(){
     return 1
 }
 
+isfreebsd(){
+    [[ $OSTYPE == freebsd* ]] && return 0
+    return 1
+}
+
 #f1# are we running within an utf environment?
 isutfenv() {
     case "$LANG $CHARSET $LANGUAGE" in
@@ -533,8 +538,9 @@ export SHELL='/bin/zsh'
 
 # color setup for ls:
 check_com -c dircolors && eval $(dircolors -b)
-# color setup for ls on OS X:
+# color setup for ls on OS X / FreeBSD:
 isdarwin && export CLICOLOR=1
+isfreebsd && export CLICOLOR=1
 
 # do MacPorts setup on darwin
 if isdarwin && [[ -d /opt/local ]]; then
@@ -549,7 +555,7 @@ isdarwin && xsource /sw/bin/init.sh
 # load our function and completion directories
 for fdir in /usr/share/grml/zsh/completion /usr/share/grml/zsh/functions; do
     fpath=( ${fdir} ${fdir}/**/*(/N) ${fpath} )
-    if [[ ${fpath} == '/usr/share/grml/zsh/functions' ]] ; then
+    if [[ ${fdir} == '/usr/share/grml/zsh/functions' ]] ; then
         for func in ${fdir}/**/[^_]*[^~](N.) ; do
             zrcautoload ${func:t}
         done
@@ -578,6 +584,22 @@ watch=(notme root)
 
 # automatically remove duplicates from these arrays
 typeset -U path cdpath fpath manpath
+
+# Remove zle-line-{init,finish} if it looks like it turns smkx. This would be
+# better fixed by working with those modes too, but we use way too many
+# hardcoded bindings for now.
+function remove_widget () {
+    local name=$1
+    local cap=$2
+    if (( ${+functions[$name]} )) && [[ ${functions[$name]} == *${cap}* ]]; then
+        local w=${widgets[$name]}
+        zle -D $name
+        [[ $w == user:* ]] && unfunction ${w#*:}
+    fi
+}
+remove_widget zle-line-init smkx
+remove_widget zle-line-finish rmkx
+unfunction remove_widget
 
 # keybindings
 if [[ "$TERM" != emacs ]] ; then
@@ -963,7 +985,6 @@ if zrcautoload compinit ; then
     compinit || print 'Notice: no compinit available :('
 else
     print 'Notice: no compinit available :('
-    function zstyle { }
     function compdef { }
 fi
 
@@ -1705,6 +1726,15 @@ grmlcomp() {
     zstyle ':completion:*:manuals.*'  insert-sections   true
     zstyle ':completion:*:man:*'      menu yes select
 
+    # Search path for sudo completion
+    zstyle ':completion:*:sudo:*' command-path /usr/local/sbin \
+                                               /usr/local/bin  \
+                                               /usr/sbin       \
+                                               /usr/bin        \
+                                               /sbin           \
+                                               /bin            \
+                                               /usr/X11R6/bin
+
     # provide .. as a completion
     zstyle ':completion:*' special-dirs ..
 
@@ -2150,9 +2180,11 @@ deswap() {
 #           VIM_OPTIONS=( -p )
 #       This will cause vim to send every file given on the
 #       commandline to be send to it's own tab (needs vim7).
-vim() {
-    VIM_PLEASE_SET_TITLE='yes' command vim ${VIM_OPTIONS} "$@"
-}
+if check_com vim; then
+    vim() {
+        VIM_PLEASE_SET_TITLE='yes' command vim ${VIM_OPTIONS} "$@"
+    }
+fi
 
 # make a backup of a file
 bk() {
@@ -2420,62 +2452,62 @@ simple-extract() {
     zparseopts -D -E "d=DELETE_ORIGINAL"
     for ARCHIVE in "${@}"; do
         case $ARCHIVE in
-            *.(tar.bz2|tbz2|tbz))
+            *(tar.bz2|tbz2|tbz))
                 DECOMP_CMD="tar -xvjf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
-            *.(tar.gz|tgz))
+            *(tar.gz|tgz))
                 DECOMP_CMD="tar -xvzf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
-            *.(tar.xz|txz|tar.lzma))
+            *(tar.xz|txz|tar.lzma))
                 DECOMP_CMD="tar -xvJf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
-            *.tar)
+            *tar)
                 DECOMP_CMD="tar -xvf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
-            *.rar)
+            *rar)
                 DECOMP_CMD="unrar x"
                 USES_STDIN=false
                 USES_STDOUT=false
                 ;;
-            *.lzh)
+            *lzh)
                 DECOMP_CMD="lha x"
                 USES_STDIN=false
                 USES_STDOUT=false
                 ;;
-            *.7z)
+            *7z)
                 DECOMP_CMD="7z x"
                 USES_STDIN=false
                 USES_STDOUT=false
                 ;;
-            *.(zip|jar))
+            *(zip|jar))
                 DECOMP_CMD="unzip"
                 USES_STDIN=false
                 USES_STDOUT=false
                 ;;
-            *.deb)
+            *deb)
                 DECOMP_CMD="ar -x"
                 USES_STDIN=false
                 USES_STDOUT=false
                 ;;
-            *.bz2)
+            *bz2)
                 DECOMP_CMD="bzip2 -d -c -"
                 USES_STDIN=true
                 USES_STDOUT=true
                 ;;
-            *.(gz|Z))
+            *(gz|Z))
                 DECOMP_CMD="gzip -d -c -"
                 USES_STDIN=true
                 USES_STDOUT=true
                 ;;
-            *.(xz|lzma))
+            *(xz|lzma))
                 DECOMP_CMD="xz -d -c -"
                 USES_STDIN=true
                 USES_STDOUT=true

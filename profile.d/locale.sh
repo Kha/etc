@@ -1,83 +1,28 @@
-unset LANG
+#!/bin/sh
 
-if [ -s /etc/locale.conf ]; then
-	. /etc/locale.conf
+unset LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES \
+      LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT LC_IDENTIFICATION
+
+if [ -n "$XDG_CONFIG_HOME" ] && [ -r "$XDG_CONFIG_HOME/locale.conf" ]; then
+  . "$XDG_CONFIG_HOME/locale.conf"
+elif [ -n $HOME ] && [ -r $HOME/.config/locale.conf ]; then
+  . "$HOME/.config/locale.conf"
+elif [ -r /etc/locale.conf ]; then
+  . /etc/locale.conf
+elif [ -r /etc/rc.conf ]; then
+  LANG=$(. /etc/rc.conf 2>/dev/null; echo "$LOCALE")
 fi
 
-if [ -z "$LANG" ] && [ -s /etc/rc.conf ]; then
-	LANG=$(. /etc/rc.conf 2>/dev/null; echo "$LOCALE")
-fi
-
-export LANG=${LANG:-C}
-
-if [ -n "$LC_CTYPE" ]; then
-	export LC_CTYPE
-else
-	unset LC_CTYPE
-fi
-
-if [ -n "$LC_NUMERIC" ]; then
-	export LC_NUMERIC
-else
-	unset LC_NUMERIC
-fi
-
-if [ -n "$LC_TIME" ]; then
-	export LC_TIME
-else
-	unset LC_TIME
-fi
-
-if [ -n "$LC_COLLATE" ]; then
-	export LC_COLLATE
-else
-	unset LC_COLLATE
-fi
-
-if [ -n "$LC_MONETARY" ]; then
-	export LC_MONETARY
-else
-	unset LC_MONETARY
-fi
-
-if [ -n "$LC_MESSAGES" ]; then
-	export LC_MESSAGES
-else
-	unset LC_MESSAGES
-fi
-
-if [ -n "$LC_PAPER" ]; then
-	export LC_PAPER
-else
-	unset LC_PAPER
-fi
-
-if [ -n "$LC_NAME" ]; then
-	export LC_NAME
-else
-	unset LC_NAME
-fi
-
-if [ -n "$LC_ADDRESS" ]; then
-	export LC_ADDRESS
-else
-	unset LC_ADDRESS
-fi
-
-if [ -n "$LC_TELEPHONE" ]; then
-	export LC_TELEPHONE
-else
-	unset LC_TELEPHONE
-fi
-
-if [ -n "$LC_MEASUREMENT" ]; then
-	export LC_MEASUREMENT
-else
-	unset LC_MEASUREMENT
-fi
-
-if [ -n "$LC_IDENTIFICATION" ]; then
-	export LC_IDENTIFICATION
-else
-	unset LC_IDENTIFICATION
-fi
+export LANG="${LANG:-C}"
+[ -n "$LC_CTYPE" ]          && export LC_CTYPE
+[ -n "$LC_NUMERIC" ]        && export LC_NUMERIC
+[ -n "$LC_TIME" ]           && export LC_TIME
+[ -n "$LC_COLLATE" ]        && export LC_COLLATE
+[ -n "$LC_MONETARY" ]       && export LC_MONETARY
+[ -n "$LC_MESSAGES" ]       && export LC_MESSAGES
+[ -n "$LC_PAPER" ]          && export LC_PAPER
+[ -n "$LC_NAME" ]           && export LC_NAME
+[ -n "$LC_ADDRESS" ]        && export LC_ADDRESS
+[ -n "$LC_TELEPHONE" ]      && export LC_TELEPHONE
+[ -n "$LC_MEASUREMENT" ]    && export LC_MEASUREMENT
+[ -n "$LC_IDENTIFICATION" ] && export LC_IDENTIFICATION
