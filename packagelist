@@ -7,6 +7,7 @@ autofs
 automake
 autorandr-git
 bash
+bash-completion
 bdf-unifont
 binutils
 bison
@@ -57,7 +58,6 @@ i3lock
 i3status
 iftop
 inetutils
-initscripts
 iperf
 iputils
 jfsutils
@@ -119,8 +119,7 @@ spotify-beta
 sshfs
 sudo
 sysfsutils
-syslog-ng
-sysvinit
+systemd-sysvcompat
 tar
 texinfo
 tk

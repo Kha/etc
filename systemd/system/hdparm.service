@@ -1,0 +1,8 @@
+[Unit]
+Description=Disable harmful head parking
+
+[Service]
+ExecStart=/sbin/hdparm -B 255 /dev/sda
+
+[Install]
+WantedBy=multi-user.target 
