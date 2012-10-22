@@ -1,0 +1,8 @@
+[Unit]
+Description=Clean /var/real-tmp on boot
+
+[Service]
+ExecStart=/usr/bin/find /var/real-tmp/ -mindepth 1 -delete
+
+[Install]
+WantedBy=basic.target

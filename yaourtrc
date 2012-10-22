@@ -11,7 +11,7 @@
 #EDITOR="$EDITOR"
 #FORCEENGLISH=0
 #FORCE=0
-#TMPDIR="/tmp"
+#TMPDIR="/var/real-tmp/"
 
 # SUDO
 #SUDONOVERIF=0      # Avoid multiple sudo checks when timestamp_timeout=0
