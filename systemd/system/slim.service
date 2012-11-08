@@ -1,0 +1,4 @@
+.include /usr/lib/systemd/system/slim.service
+
+[Service]
+StandardOutput=null
