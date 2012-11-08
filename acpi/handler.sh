@@ -1,16 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 # Default acpi script that takes an entry for all actions
-
-lock() { logger "locking"; su sebastian -c 'DISPLAY=:0 i3lock -c 000000'; }
-
-suspend() {
-	/etc/pm/sleep.d/00pidgin thaw
-    lock
-    echo mem > /sys/power/state
-    sleep 1
-    hdparm -B 255 /dev/sda
-	/etc/pm/sleep.d/00pidgin resume
-}
 
 minspeed=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq`
 maxspeed=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq`
@@ -19,32 +8,10 @@ setspeed="/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed"
 set $*
 
 case "$1" in
-    button/power)
-        case "$2" in
-            PBTN|PWRF)
-                logger "PowerButton pressed: $2"
-                suspend
-                #poweroff
-                ;;
-            *)
-                logger "ACPI action undefined: $2"
-                ;;
-        esac
-        ;;
-    button/sleep)
-        case "$2" in
-            SLPB|SBTN)
-                suspend
-                ;;
-            *)
-                logger "ACPI action undefined: $2"
-                ;;
-        esac
-        ;;
     button/prog1)
         case "$2" in
             PROG1)
-                suspend
+                systemctl suspend
                 ;;
             *)
                 logger "ACPI action undefined: $2"
@@ -54,7 +21,7 @@ case "$1" in
     button/screenlock)
         case "$2" in
             SCRNLCK)
-                lock
+                systemctl start i3lock.service
                 ;;
             *)
                 logger "ACPI action undefined: $2"
@@ -100,7 +67,7 @@ case "$1" in
     button/lid)
         case "$3" in
             close)
-                suspend
+                systemctl suspend
                 ;;
             open)
                 ;;
@@ -109,9 +76,9 @@ case "$1" in
                 ;;
     esac
     ;;
-    *)
-        logger "ACPI group/action undefined: $1 / $2"
-        ;;
+#    *)
+#        logger "ACPI group/action undefined: $1 / $2"
+#        ;;
 esac
 
 # vim:set ts=4 sw=4 ft=sh et:
