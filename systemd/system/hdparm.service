@@ -5,4 +5,4 @@ Description=Disable harmful head parking
 ExecStart=/sbin/hdparm -B 255 /dev/sda
 
 [Install]
-WantedBy=multi-user.target 
+WantedBy=basic.target
